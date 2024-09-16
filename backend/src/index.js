@@ -9,6 +9,15 @@ dotenv.config({
 
 connectDB()
 
+.then(()=>{
+    app.listen(process.env.PORT || 8000 , () =>{
+        console.log(`Server is running at port:${process.env.PORT}`);
+    })
+})
+.catch((err) =>{
+    console.log("MongoDB connection failed ",err);
+})
+
 
 // Use this code or just go to db folder index.js use that .This gives a systematic look to main index.js becuase very few code is written here 
 
