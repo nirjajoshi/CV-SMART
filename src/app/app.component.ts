@@ -1,12 +1,16 @@
 import { Component } from '@angular/core';
 import { RouterModule, RouterOutlet } from '@angular/router';
 import { HeaderComponent } from "./header/header.component";
-import { routes } from './app.routes';
+import { HomeComponent } from "./home/home.component";
+import { ReactiveFormsModule } from '@angular/forms'; // Import ReactiveFormsModule
+import { CommonModule } from '@angular/common';
+import { RegistrationComponent } from "./registration/registration.component"; // Import CommonModule for basic Angular directives
+
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, HeaderComponent],
+  imports: [RouterOutlet, HeaderComponent, HomeComponent, ReactiveFormsModule, CommonModule, RegistrationComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

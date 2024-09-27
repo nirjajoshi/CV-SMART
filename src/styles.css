@@ -1,10 +1,24 @@
-body{
-    font-family: Dream Avenue;
-    background-color:#e6ddd8;
-}
-.container{
-    margin-left: 3%;
-    margin-right: 3%;
+/* Hides the scrollbar */
+::-webkit-scrollbar {
+    display: none; /* Hides the scrollbar */
 }
 
-  
+body {
+    font-family: 'Dream Avenue'; /* Ensure font is applied correctly */
+    background-color: #F7F9F2;
+    margin: 0;
+    padding: 0;
+    overflow-y: scroll; /* Ensure vertical overflow is enabled */
+    height: 100vh; /* Make sure body takes full height */
+}
+
+html {
+    overflow-y: auto; /* Allow scrolling on the html element */
+    height: 100%; /* Ensure html takes full height */
+}
+
+.container-body {
+    width: 100vw;
+    min-height: 100vh; /* Allows content to grow */
+    height: auto; /* Auto height */
+}
