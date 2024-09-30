@@ -1,53 +1,116 @@
 <div class="registration-form-container">
-    <h2>Sign In</h2>
-    <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()">
-      <div class="form-group">
-        <label for="email">Email:</label>
-        <input
-          type="email"
-          id="email"
-          formControlName="email"
-          class="form-control"
-          [ngClass]="{ 'is-invalid': submitted && f['email'].errors }"
-        />
-        <div class="invalid-feedback" *ngIf="submitted && f['email'].errors">
-          <div *ngIf="f['email'].errors['required']">Email is required</div>
-          <div *ngIf="f['email'].errors['email']">Invalid email format</div>
-        </div>
+  <h2>Sign In</h2>
+  <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="email">Email:</label>
+      <input
+        type="email"
+        id="email"
+        formControlName="email"
+        class="form-control"
+        [ngClass]="{ 'is-invalid': submitted && f['email'].errors }"
+      />
+      <div class="invalid-feedback" *ngIf="submitted && f['email'].errors">
+        <div *ngIf="f['email'].errors['required']">Email is required</div>
+        <div *ngIf="f['email'].errors['email']">Invalid email format</div>
       </div>
-  
+    </div>
+        <!-- Fullname Field -->
       <div class="form-group">
-        <label for="phone">Phone Number:</label>
-        <input
-          type="text"
-          id="phone"
-          formControlName="phone"
-          class="form-control"
-          [ngClass]="{ 'is-invalid': submitted && f['phone'].errors }"
-        />
-        <div class="invalid-feedback" *ngIf="submitted && f['phone'].errors">
-          <div *ngIf="f['phone'].errors['required']">Phone number is required</div>
-          <div *ngIf="f['phone'].errors['pattern']">Invalid phone number</div>
-        </div>
-      </div>
-  
-      <div class="form-group">
-        <label for="role">Role:</label>
-        <input
-          type="text"
-          id="role"
-          formControlName="role"
-          class="form-control"
-          [ngClass]="{ 'is-invalid': submitted && f['role'].errors }"
-        />
-        <div class="invalid-feedback" *ngIf="submitted && f['role'].errors">
-          <div *ngIf="f['role'].errors['required']">Role is required</div>
-          <div *ngIf="f['role'].errors['pattern']">
-            Role must be 'candidate', 'admin', or 'company'
+          <label for="fullname">Full Name:</label>
+          <input
+            type="text"
+            id="fullname"
+            formControlName="fullname"
+            class="form-control"
+            [ngClass]="{ 'is-invalid': submitted && f['fullname'].errors }"
+          />
+          <div class="invalid-feedback" *ngIf="submitted && f['fullname'].errors">
+            <div *ngIf="f['fullname'].errors['required']">Full name is required</div>
+            <div *ngIf="f['fullname'].errors['minlength']">Full name must be at least 2 characters</div>
           </div>
         </div>
-      </div>
-  
-      <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
-  </div>
+
+        <!-- Password Field -->
+    <div class="form-group">
+      <label for="password">Password:</label>
+      <input
+            type="password"
+            id="password"
+            formControlName="password"
+            class="form-control"
+            [ngClass]="{ 'is-invalid': submitted && f['password'].errors }"
+          />
+      <div class="invalid-feedback" *ngIf="submitted && f['password'].errors">
+            <div *ngIf="f['password'].errors['required']">Password is required</div>
+            <div *ngIf="f['password'].errors['minlength']">
+              Password must be at least 6 characters
+            </div>
+            <div *ngIf="f['password'].errors['pattern']">
+              Password must include at least one letter, one number, and one special character
+            </div>
+          </div>
+        </div>
+
+        <!-- Role Field -->
+      <div class="form-group">
+          <label for="role">Role:</label>
+          <select
+            id="role"
+            formControlName="role"
+            class="form-control"
+            [ngClass]="{ 'is-invalid': submitted && f['role'].errors }"
+          >
+            <option value="" disabled>Select Role</option>
+            <option value="candidate">Candidate</option>
+            <option value="admin">Admin</option>
+            <option value="company">Company</option>
+          </select>
+          <div class="invalid-feedback" *ngIf="submitted && f['role'].errors">
+            <div *ngIf="f['role'].errors['required']">Role is required</div>
+            <div *ngIf="f['role'].errors['pattern']">
+              Role must be 'candidate', 'admin', or 'company'
+            </div>
+          </div>
+        </div>    
+        
+        <!-- Status Field (Conditional) -->
+     <div class="form-group" *ngIf="f['role'].value.toLowerCase() === 'candidate' || f['role'].value.toLowerCase() === 'company'">
+          <label for="status">Status:</label>
+          <select
+            id="status"
+            formControlName="status"
+            class="form-control"
+            [ngClass]="{ 'is-invalid': submitted && f['status'].errors }"
+          >
+            <option value="" disabled>Select Status</option>
+            <ng-container *ngIf="f['role'].value.toLowerCase() === 'candidate'">
+              <option *ngFor="let status of candidateStatuses" [value]="status.value">
+                {{ status.display }}
+              </option>
+            </ng-container>
+            <ng-container *ngIf="f['role'].value.toLowerCase() === 'company'">
+              <option *ngFor="let status of companyStatuses" [value]="status.value">
+                {{ status.display }}
+              </option>
+            </ng-container>
+          </select>
+          <div class="invalid-feedback" *ngIf="submitted && f['status'].errors">
+            <div *ngIf="f['status'].errors['required']">Status is required</div>
+          </div>
+        </div>   
+            <!-- Success Message -->
+    <div class="alert alert-success" *ngIf="serverSuccess">
+      {{ serverSuccess }}
+    </div>
+
+    <!-- Error Message -->
+    <div class="alert alert-danger" *ngIf="serverError">
+      {{ serverError }}
+    </div> 
+
+
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+</div>

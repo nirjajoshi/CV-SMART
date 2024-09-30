@@ -13,10 +13,35 @@
      <li><a routerLink='/dashboard'>Dashboard</a></li>
      <li><a routerLink='/findcand'>Find Candidates</a></li>
      <li><a routerLink='/findjob'>Find Jobs</a></li>
-     <li><a href="#">Contact Us</a></li>
-     <!-- <li><a routerLink='/register'>Register</a></li> -->
+     <!-- <li><a routerLink='' fragment="contact-us">Contact Us</a></li> -->
+     <li>
+      <button class="profile-button" (click)="isAuthenticated ? showUserDetails() : toggleLoginModal()">
+        <img src="assets/profile1.png" class="profile-img" alt="Profile"/>
+      </button>
+      <div *ngIf="isUserDetailsOpen" class="user-details-box">
+        <p>{{ userDetails?.email }}</p>
+        <p>Status: {{ userDetails?.status }}</p>
+        <button (click)="logout()">Logout</button>
+      </div>
+    </li>
   </ul>
-</nav>
+
+<!-- Login Modal -->
+<div *ngIf="isLoginModalOpen" class="modal-overlay">
+  <div class="login-modal">
+    <h2>Login</h2>
+    <div class="input-group">
+      <label for="email">Email</label>
+      <input id="email" [(ngModel)]="loginData.email" type="email" placeholder="Enter your email" />
+    </div>
+    <div class="input-group">
+      <label for="password">Password</label>
+      <input id="password" [(ngModel)]="loginData.password" type="password" placeholder="Enter your password" />
+    </div>
+    <button (click)="login()">Login</button>
+    <span class="close-modal" (click)="toggleLoginModal()">×</span>
+  </div>
+</div>
 
 
 

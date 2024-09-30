@@ -1,48 +1,187 @@
-/* General styles */
+/* General Styles */
 .nav {
   display: flex;
   justify-content: space-between;
   align-items: center; 
-  background-color: #f5f5f5;
-  padding: 10px;
+  background-color:  #F8EDE3;
+  padding: 10px 20px; /* Added horizontal padding for better spacing */
+  padding-bottom: 3px;
+  position: relative; /* To position dropdowns relative to nav */
 }
-.nav img{
+
+.nav img {
   max-width: 250px;
-  margin:0;
+  height: auto; /* Ensure the logo maintains aspect ratio */
+  margin: 0;
 }
 
 .nav a {
   text-decoration: none; /* Remove underline from all links */
 }
 
-/* Specific styles for the h1 and h4 links */
-
-
+/* Navigation Menu */
 .nav ul {
   display: flex;
   list-style-type: none;
-  margin: 0;
+  margin-top: 20px;
   padding-right: 20px;
 }
 
 .nav li {
+  position: relative; /* Important for the user-details-box positioning */
   padding: 0 15px;
 }
 
-.nav li a {
+.nav li a, .nav li button.profile-button {
   text-decoration: none;
   color: #071952;
   font-size: 18px;
   padding: 10px;
-  transition: background-color 0.3s ease-in-out;
+  margin-top: 0px;
+  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+  background: none; /* Remove default button background */
+  border: none; /* Remove default button border */
+  cursor: pointer; /* Change cursor to pointer on hover */
 }
 
-.nav li a:hover {
+.nav li a:hover, .nav li button.profile-button:hover {
   background-color: #071952;
   color: #fff;
 }
 
-/* Hamburger icon styles */
+.profile-img {
+  width: 40px;
+  height: 45px;
+  color: #071952;
+  transition: transform 0.3s ease-in-out;
+  border-radius: 50%;
+  padding-top: 0px;
+  padding-bottom: 5px;
+}
+
+.profile-img:hover {
+  transform: scale(1.1); /* Slightly enlarge on hover for feedback */
+}
+
+/* User Details Box */
+.user-details-box {
+  background-color: #555;;
+  padding: 0.75rem 1.25rem;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  position: absolute; /* Position relative to the nearest positioned ancestor (.nav li) */
+  top: 50px; /* Adjust based on nav bar height */
+  right: 0;
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  min-width: 200px; /* Ensure a minimum width for content */
+}
+
+.user-details-box p {
+  margin: 0.3rem 0;
+  font-size: 14px;
+}
+
+.user-details-box button {
+  margin-top: 0.5rem;
+  padding: 0.4rem 0.8rem;
+  background-color: red;
+  border: none;
+  border-radius: 3px;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.user-details-box button:hover {
+  background-color: #071952;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000; /* Higher z-index to ensure it appears above other elements */
+}
+
+.login-modal {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 400px; /* Increased max-width for better layout on larger screens */
+  text-align: center;
+  position: relative;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.login-modal h2 {
+  margin-bottom: 1.5rem;
+  color: #071952;
+}
+
+.login-modal .input-group {
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+.login-modal .input-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+  color: #555;
+}
+
+.login-modal input {
+  width: 100%;
+  padding: 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.login-modal button {
+  padding: 0.6rem 1rem;
+  background-color: #333;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+  font-size: 16px;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.login-modal button:hover {
+  background-color: #071952;
+}
+
+.close-modal {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  cursor: pointer;
+  font-size: 24px;
+  color: #f44336;
+  transition: color 0.3s ease-in-out;
+}
+
+.close-modal:hover {
+  color: #d32f2f;
+}
+
+/* Hamburger Icon Styles */
 .hamburger {
   display: none; /* Hidden by default */
   flex-direction: column;
@@ -54,31 +193,56 @@
   height: 3px;
   background-color: #071952;
   margin: 4px 0;
-  transition: 0.4s;
-}
-.nav ul.active {
-  display: block; /* Show menu when active */
+  transition: all 0.4s ease;
 }
 
-/* Mobile responsiveness */
+/* Responsive Styles */
 @media screen and (max-width: 768px) {
   .nav ul {
-     display:contents; /* Hide menu items by default */
-     flex-direction: column; /* Stack menu items vertically */
-     position: absolute;
-     right: 0;
-     top: 60px; /* Adjust based on your header height */
-     background-color: #f5f5f5;
-     width: 200px; /* Adjust as needed */
-     padding: 10px;
-     border: 1px solid #ddd;
+    display: none; /* Hide menu items by default */
+    flex-direction: column; /* Stack menu items vertically */
+    position: absolute;
+    right: 0;
+    top: 60px; /* Adjust based on your header height */
+    background-color: #f5f5f5;
+    width: 200px; /* Adjust as needed */
+    padding: 10px 0;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
   
-  .nav.active ul {
-     display: flex; /* Show menu items when 'active' class is added */
+  .nav ul.active {
+    display: flex; /* Show menu items when 'active' class is added */
+  }
+
+  .nav li {
+    padding: 10px 20px; /* Increased padding for touch devices */
   }
 
   .hamburger {
-     display: flex; /* Show hamburger menu */
+    display: flex; /* Show hamburger menu */
+  }
+}
+
+/* Additional Enhancements */
+.user-details-box::before {
+  content: "";
+  position: absolute;
+  top: -10px; /* Position the arrow */
+  right: 10px; /* Align with the box */
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent #444 transparent; /* Create a downward arrow */
+}
+
+/* Ensuring the modal is scrollable on smaller screens */
+@media screen and (max-width: 480px) {
+  .login-modal {
+    padding: 1.5rem;
+    width: 95%;
+  }
+
+  .user-details-box {
+    top: 55px; /* Slight adjustment for smaller screens */
   }
 }

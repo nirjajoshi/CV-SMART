@@ -2,10 +2,6 @@ import express from "express"
 import cookieParser from "cookie-parser"
 import cors from "cors"
 
-// app.get("/",(req,res)=>{
-//     res.status(200).send("nirja loves mann");
-// })
-
 const app = express()
 app.use(cors({
     origin:process.env.CORS_ORIGIN,
