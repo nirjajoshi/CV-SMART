@@ -19,8 +19,21 @@
         <img src="assets/profile1.png" class="profile-img" alt="Profile"/>
       </button>
       <div *ngIf="isUserDetailsOpen" class="user-details-box">
-        <p>{{ userDetails?.email }}</p>
-        <p>Status: {{ userDetails?.status }}</p>
+        <p>{{ userDetails.email }}</p>
+        <div>
+          <label for="status">Status:</label>
+          <span>{{ userDetails.status }}</span>
+          <button (click)="toggleStatusOptions()">Update Status</button>
+          <div *ngIf="showStatusOptions">
+            <select [(ngModel)]="selectedStatus">
+              <option *ngIf="userDetails?.status === 'open_to_network'" value="not_open_to_network">Not Open to Network</option>
+              <option *ngIf="userDetails?.status === 'hiring'" value="not_hiring">Not Hiring</option>
+              <option *ngIf="userDetails?.status === 'not_open_to_network'" value="open_to_network">Open to Network</option>
+              <option *ngIf="userDetails?.status === 'not_hiring'" value="hiring">Hiring</option>
+            </select>
+            <button (click)="saveStatus()">Save</button>
+          </div>
+        </div>
         <button (click)="logout()">Logout</button>
       </div>
     </li>
