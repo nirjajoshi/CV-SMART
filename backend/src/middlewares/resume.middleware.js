@@ -6,7 +6,7 @@ import fs from 'fs';
 const __dirname = path.resolve();
 
 // Set the path for the uploads folder
-const uploadDir = path.join(__dirname, 'uploads', 'job_descriptions');
+const uploadDir = path.join(__dirname, 'uploads', 'resumes');
 
 // Check if the upload directory exists
 if (!fs.existsSync(uploadDir)) {
@@ -25,5 +25,5 @@ const storage = multer.diskStorage({
 });
 
 // Create the multer instance
-const upload = multer({ storage });
-export { upload };
+const uploadResume = multer({ storage });
+export { uploadResume };

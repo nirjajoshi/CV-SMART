@@ -13,7 +13,4 @@ router.route("/logout").post(logoutUser);
 router.route("/update-status").post(updateUserStatus); 
 router.route("/save-status").post(saveUserUpdates);
 
-
-
-
 export default router;

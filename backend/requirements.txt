@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+spacy
+spacy-transformers
+pydantic
+requests
+transformers
+torch
