@@ -1,0 +1,24 @@
+<div *ngIf="jobs.length > 0; else noJobs">
+  <div *ngFor="let job of jobs" class="job-card">
+    <h3>{{ job.title }}</h3>
+    <p>Location: {{ job.location }}</p>
+    <p>
+      Status:
+      <span [ngClass]="{
+          'open-status': job.status === 'hiring',
+          'closed-status': job.status === 'not_hiring'
+        }">
+        {{ job.status }}
+      </span>
+    </p>
+
+    <!-- View Job Description and Apply buttons -->
+    <button (click)="viewJobDescription(job.fileUrl)">View Job Description</button>
+    <button (click)="apply(job.id)">Apply</button>
+  </div>
+</div>
+
+<!-- Template for when no jobs are available -->
+<ng-template #noJobs>
+  <p>No jobs found. Please try again later.</p>
+</ng-template>

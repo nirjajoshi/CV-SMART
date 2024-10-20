@@ -1,20 +1,41 @@
 <nav class="nav">
   <div>
-   <a routerLink='' ><img src="assets\logo.png"/></a>
+    <a routerLink='/'><img src="assets/logo.png" alt="Logo"/></a>
   </div>
   
-  <div class="hamburger" onclick="toggleMenu()">
-     <div></div>
-     <div></div>
-     <div></div>
+  <div class="hamburger" (click)="toggleMenu()">
+    <div></div>
+    <div></div>
+    <div></div>
   </div>
   
   <ul [ngClass]="{ 'active': isMenuOpen }">
-     <li><a routerLink='/dashboard'>Dashboard</a></li>
-     <li><a routerLink='/findcand'>Find Candidates</a></li>
-     <li><a routerLink='/findjob'>Find Jobs</a></li>
-     <!-- <li><a routerLink='' fragment="contact-us">Contact Us</a></li> -->
-     <li>
+    <!-- Unauthenticated Users: Show Find Candidates and Find Jobs as buttons to open login modal -->
+    <li *ngIf="!isAuthenticated">
+      <a href="#" (click)="toggleLoginModal()">Find Candidates</a>
+    </li>
+    <li *ngIf="!isAuthenticated">
+      <a href="#" (click)="toggleLoginModal()">Find Jobs</a>
+    </li>
+    
+    <!-- Authenticated Users: Conditionally show links based on role -->
+    <!-- Admin: Show Dashboard -->
+    <li *ngIf="isAuthenticated && isAdmin">
+      <a routerLink='/dashboard'>Dashboard</a>
+    </li>
+    
+    <!-- Company: Show Find Candidates -->
+    <li *ngIf="isAuthenticated && isCompany">
+      <a routerLink='/findcand'>Find Candidates</a>
+    </li>
+    
+    <!-- Candidate: Show Find Jobs -->
+    <li *ngIf="isAuthenticated && isCandidate">
+      <a routerLink='/findjob'>Find Jobs</a>
+    </li>
+    
+    <!-- Profile Button -->
+    <li>
       <button class="profile-button" (click)="isAuthenticated ? showUserDetails() : toggleLoginModal()">
         <img src="assets/profile1.png" class="profile-img" alt="Profile"/>
       </button>
@@ -26,10 +47,13 @@
           <button (click)="toggleStatusOptions()">Update Status</button>
           <div *ngIf="showStatusOptions">
             <select [(ngModel)]="selectedStatus">
+              <!-- Conditionally render options based on current status -->
               <option *ngIf="userDetails?.status === 'open_to_network'" value="not_open_to_network">Not Open to Network</option>
               <option *ngIf="userDetails?.status === 'hiring'" value="not_hiring">Not Hiring</option>
               <option *ngIf="userDetails?.status === 'not_open_to_network'" value="open_to_network">Open to Network</option>
               <option *ngIf="userDetails?.status === 'not_hiring'" value="hiring">Hiring</option>
+              <!-- Add Admin status if needed -->
+              <option *ngIf="userDetails?.status === 'admin'" value="admin">Admin</option>
             </select>
             <button (click)="saveStatus()">Save</button>
           </div>
@@ -39,22 +63,20 @@
     </li>
   </ul>
 
-<!-- Login Modal -->
-<div *ngIf="isLoginModalOpen" class="modal-overlay">
-  <div class="login-modal">
-    <h2>Login</h2>
-    <div class="input-group">
-      <label for="email">Email</label>
-      <input id="email" [(ngModel)]="loginData.email" type="email" placeholder="Enter your email" />
+  <!-- Login Modal -->
+  <div *ngIf="isLoginModalOpen" class="modal-overlay">
+    <div class="login-modal">
+      <h2>Login</h2>
+      <div class="input-group">
+        <label for="email">Email</label>
+        <input id="email" [(ngModel)]="loginData.email" type="email" placeholder="Enter your email" />
+      </div>
+      <div class="input-group">
+        <label for="password">Password</label>
+        <input id="password" [(ngModel)]="loginData.password" type="password" placeholder="Enter your password" />
+      </div>
+      <button (click)="login()">Login</button>
+      <span class="close-modal" (click)="toggleLoginModal()">×</span>
     </div>
-    <div class="input-group">
-      <label for="password">Password</label>
-      <input id="password" [(ngModel)]="loginData.password" type="password" placeholder="Enter your password" />
-    </div>
-    <button (click)="login()">Login</button>
-    <span class="close-modal" (click)="toggleLoginModal()">×</span>
   </div>
-</div>
-
-
-
+</nav>
