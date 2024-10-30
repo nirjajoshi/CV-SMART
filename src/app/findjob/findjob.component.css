@@ -18,14 +18,14 @@ body, html {
   margin-top: 80px;
   display: flex;
   flex-direction: column;
-  width: 400px;
+  width: 400px; /* Base width */
   border: 1px solid #ddd;
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.resume-card, .location-card{
+.resume-card, .location-card {
   margin-bottom: 20px;
 }
 
@@ -111,6 +111,7 @@ input[type="text"] {
 .file-name {
   font-size: 14px;
 }
+
 .submit-button {
   background-color: #4CAF50; /* Green */
   color: white;
@@ -128,4 +129,46 @@ input[type="text"] {
 .message {
   color: green;
   margin-top: 10px;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .search-container {
+      width: 90%; /* Use a percentage width on smaller screens */
+      margin: 20px; /* Reduce top margin */
+  }
+
+  h2 {
+      font-size: 16px; /* Smaller font size for headings */
+  }
+
+  .custom-file-upload {
+      padding: 8px 15px; /* Smaller padding for buttons */
+  }
+
+  input[type="text"] {
+      padding: 8px; /* Reduce padding for input fields */
+  }
+
+  .resume-card, .location-card {
+      margin-bottom: 15px; /* Reduce margin between cards */
+  }
+
+  .button-container {
+      flex-direction: column; /* Stack buttons vertically */
+      align-items: stretch; /* Stretch buttons to fill width */
+  }
+
+  .submit-button, .find-job-button {
+      width: 100%; /* Full-width buttons */
+      margin-bottom: 10px; /* Space between buttons */
+  }
+
+  .file-name {
+      font-size: 12px; /* Smaller font size for file name */
+  }
+
+  .suggestions-list {
+      max-height: 100px; /* Reduce the height of suggestions */
+  }
 }

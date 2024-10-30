@@ -45,3 +45,30 @@ button:hover {
     color: red; /* Color for inactive status */
     font-weight: bold; /* Bold text for emphasis */
 }
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .candidate-card {
+        padding: 12px; /* Reduce padding on smaller screens */
+    }
+
+    h3 {
+        font-size: 1.25em; /* Smaller font size for headings */
+    }
+
+    button {
+        padding: 8px 12px; /* Smaller padding for buttons */
+        margin-right: 5px; /* Reduce margin between buttons */
+    }
+
+    /* Stack buttons vertically for smaller screens */
+    button {
+        display: block;
+        width: 100%; /* Full-width buttons */
+        margin-bottom: 10px; /* Space below buttons */
+    }
+
+    button:last-child {
+        margin-bottom: 0; /* Remove margin for the last button */
+    }
+}

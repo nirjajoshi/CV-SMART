@@ -1,48 +1,87 @@
 .job-card {
-    border: 1px solid #ccc; /* Light gray border */
-    border-radius: 8px; /* Rounded corners */
-    padding: 16px; /* Padding around the content */
-    margin: 16px 0; /* Margin between job cards */
-    background-color: #f9f9f9; /* Light background color */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-    transition: box-shadow 0.3s; /* Smooth transition for hover effect */
+  border: 1px solid #ccc; /* Light gray border */
+  border-radius: 8px; /* Rounded corners */
+  padding: 16px; /* Padding around the content */
+  margin: 16px 0; /* Margin between job cards */
+  background-color: #f9f9f9; /* Light background color */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  transition: box-shadow 0.3s; /* Smooth transition for hover effect */
+}
+
+.job-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Darker shadow on hover */
+}
+
+h3 {
+  margin: 0 0 8px; /* No margin on top, space below */
+  font-size: 1.5em; /* Increase title font size */
+}
+
+p {
+  margin: 4px 0; /* Small margin around paragraphs */
+}
+
+button {
+  background-color: #007bff; /* Bootstrap primary color */
+  color: white; /* Text color */
+  border: none; /* Remove default border */
+  border-radius: 4px; /* Rounded corners */
+  padding: 10px 15px; /* Padding for button */
+  cursor: pointer; /* Pointer cursor on hover */
+  transition: background-color 0.3s; /* Smooth transition for hover */
+  margin-right: 10px; /* Space between buttons */
+}
+
+button:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+}
+
+.open-status {
+  color: green; /* Color for open status */
+  font-weight: bold; /* Bold text for emphasis */
+}
+
+.closed-status {
+  color: red; /* Color for closed status */
+  font-weight: bold; /* Bold text for emphasis */
+}
+
+/* Responsive Styles */
+@media screen and (max-width: 768px) {
+  .job-card {
+    padding: 12px; /* Slightly reduce padding for smaller screens */
+    margin: 12px 0; /* Reduce margin between cards */
   }
-  
-  .job-card:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Darker shadow on hover */
-  }
-  
+
   h3 {
-    margin: 0 0 8px; /* No margin on top, space below */
-    font-size: 1.5em; /* Increase title font size */
+    font-size: 1.2em; /* Decrease font size for smaller screens */
   }
-  
+
   p {
-    margin: 4px 0; /* Small margin around paragraphs */
+    font-size: 14px; /* Slightly smaller paragraph text */
   }
-  
+
   button {
-    background-color: #007bff; /* Bootstrap primary color */
-    color: white; /* Text color */
-    border: none; /* Remove default border */
-    border-radius: 4px; /* Rounded corners */
-    padding: 10px 15px; /* Padding for button */
-    cursor: pointer; /* Pointer cursor on hover */
-    transition: background-color 0.3s; /* Smooth transition for hover */
-    margin-right: 10px; /* Space between buttons */
+    padding: 8px 10px; /* Reduce button padding */
+    margin-right: 8px; /* Adjust button margin */
   }
-  
-  button:hover {
-    background-color: #0056b3; /* Darker blue on hover */
+}
+
+@media screen and (max-width: 480px) {
+  .job-card {
+    padding: 10px; /* Further reduce padding for very small screens */
   }
-  
-  .open-status {
-    color: green; /* Color for open status */
-    font-weight: bold; /* Bold text for emphasis */
+
+  h3 {
+    font-size: 1.1em; /* Further decrease font size */
   }
-  
-  .closed-status {
-    color: red; /* Color for closed status */
-    font-weight: bold; /* Bold text for emphasis */
+
+  p {
+    font-size: 12px; /* Smaller paragraph text */
   }
-  
+
+  button {
+    padding: 6px 8px; /* Further reduce button padding */
+    margin-right: 5px; /* Adjust button margin */
+  }
+}

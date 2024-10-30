@@ -3,7 +3,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center; 
-  background-color:  #F8EDE3;
+  background-color: #F8EDE3;
   padding: 10px 20px; /* Added horizontal padding for better spacing */
   padding-bottom: 3px;
   position: relative; /* To position dropdowns relative to nav */
@@ -65,7 +65,7 @@
 
 /* User Details Box */
 .user-details-box {
-  background-color: #555;;
+  background-color: #555;
   padding: 0.75rem 1.25rem;
   border-radius: 5px;
   display: flex;
@@ -199,28 +199,40 @@
 /* Responsive Styles */
 @media screen and (max-width: 768px) {
   .nav ul {
-    display: none; /* Hide menu items by default */
-    flex-direction: column; /* Stack menu items vertically */
-    position: absolute;
-    right: 0;
-    top: 60px; /* Adjust based on your header height */
-    background-color: #f5f5f5;
-    width: 200px; /* Adjust as needed */
-    padding: 10px 0;
-    border: 1px solid #ddd;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      display: none; /* Hide menu items by default */
+      flex-direction: column; /* Stack menu items vertically */
+      position: absolute;
+      right: 0;
+      top: 60px; /* Adjust based on your header height */
+      background-color: #f5f5f5;
+      width: 200px; /* Adjust as needed */
+      padding: 10px 0;
+      border: 1px solid #ddd;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
   
   .nav ul.active {
-    display: flex; /* Show menu items when 'active' class is added */
+      display: flex; /* Show menu items when 'active' class is added */
   }
 
   .nav li {
-    padding: 10px 20px; /* Increased padding for touch devices */
+      padding: 10px 20px; /* Increased padding for touch devices */
   }
 
   .hamburger {
-    display: flex; /* Show hamburger menu */
+      display: flex; /* Show hamburger menu */
+      align-items: center; /* Center items vertically */
+      padding: 10px; /* Add some padding for touch target */
+  }
+
+  .nav img {
+      max-width: 150px; /* Reduce logo size for mobile */
+  }
+
+  .nav li a,
+  .nav li button.profile-button {
+      font-size: 16px; /* Slightly reduce font size for mobile */
+      padding: 8px; /* Reduce padding for better spacing */
   }
 }
 
@@ -238,11 +250,19 @@
 /* Ensuring the modal is scrollable on smaller screens */
 @media screen and (max-width: 480px) {
   .login-modal {
-    padding: 1.5rem;
-    width: 95%;
+      padding: 1.5rem;
+      width: 95%;
   }
 
   .user-details-box {
-    top: 55px; /* Slight adjustment for smaller screens */
+      top: 55px; /* Slight adjustment for smaller screens */
+  }
+
+  .login-modal h2 {
+      font-size: 20px; /* Adjust heading size for smaller screens */
+  }
+
+  .login-modal button {
+      font-size: 14px; /* Adjust button size for smaller screens */
   }
 }

@@ -93,3 +93,48 @@ button {
 button:hover {
   background-color: #0056b3;
 }
+
+/* Responsive Styles */
+@media screen and (max-width: 768px) {
+  .registration-form-container {
+    margin: 30px auto; /* Reduce margin for smaller screens */
+    padding: 15px; /* Slightly reduce padding */
+  }
+
+  .registration-form-container h2 {
+    font-size: 20px; /* Decrease font size */
+  }
+
+  .form-group input,
+  .form-group select {
+    padding: 8px; /* Reduce padding for input fields */
+    font-size: 14px; /* Decrease font size for inputs */
+  }
+
+  button {
+    padding: 8px; /* Reduce button padding */
+    font-size: 14px; /* Decrease button font size */
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .registration-form-container {
+    margin: 20px auto; /* Further reduce margin */
+    padding: 10px; /* Further reduce padding */
+  }
+
+  .registration-form-container h2 {
+    font-size: 18px; /* Further decrease font size */
+  }
+
+  .form-group input,
+  .form-group select {
+    padding: 6px; /* Further reduce padding for inputs */
+    font-size: 12px; /* Further decrease font size for inputs */
+  }
+
+  button {
+    padding: 6px; /* Further reduce button padding */
+    font-size: 12px; /* Further decrease button font size */
+  }
+}
