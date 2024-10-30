@@ -1,29 +1,42 @@
+// multer.middleware.js
 import multer from 'multer';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import fs from 'fs';
 
-// Define __dirname for ES modules
-const __dirname = path.resolve();
+// Define __dirname for ES Modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-// Set the path for the uploads folder
-const uploadDir = path.join(__dirname, 'uploads', 'job_descriptions');
-
-// Check if the upload directory exists
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true }); // Create the directory if it doesn't exist
+// Create uploads directory if it doesn't exist
+const uploadsDir = path.join(__dirname, '..', 'uploads', 'job_descriptions');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
-// Set up storage for multer
+// Allowed file types: PDF, DOC, DOCX
+const allowedMimeTypes = [
+  'application/pdf',
+  'application/msword',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+];
+
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadDir); // Set the destination folder
+  destination: function (req, file, cb) {
+    cb(null, uploadsDir);
   },
-  filename: (req, file, cb) => {
-    // Keep the original filename
-    cb(null, file.originalname); // Save with the original filename
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname);
   },
 });
 
-// Create the multer instance
-const upload = multer({ storage });
-export { upload };
+export const upload = multer({
+  storage,
+  fileFilter: function (req, file, cb) {
+    if (allowedMimeTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Invalid file type. Only PDF, DOC, and DOCX files are allowed.'), false);
+    }
+  },
+});

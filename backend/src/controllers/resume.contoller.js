@@ -1,84 +1,98 @@
-import { asyncHandler } from "../utils/asyncHandler.js";
+import { asyncHandler } from '../utils/asyncHandler.js';
 import { User } from '../models/user.models.js';
-import es from '../utils/elasticsearchClient.js';  // Import Elasticsearch client
-import { uploadResume } from '../middlewares/resume.middleware.js';  // Import resume multer config
+import es from '../utils/elasticsearchClient.js'; // Import Elasticsearch client
+import { uploadResume } from '../middlewares/resume.middleware.js'; // Import resume multer config
 import fs from 'fs';
 import path from 'path';
 import axios from 'axios';
 import FormData from 'form-data'; // Import FormData to handle multipart/form-data
+import cloudinary from '../utils/cloudinary.js'; // Import Cloudinary configuration
 
 // Define __dirname for ES modules
 const __dirname = path.resolve();
 
 const addResume = [
-  uploadResume.single('file'),  // Use multer middleware to handle single file upload for resumes
+  uploadResume.single('file'),
   asyncHandler(async (req, res) => {
-    const { email, location } = req.body;  // Extract email and location from request body
-    const file = req.file;  // File info from multer
+    const { email, location } = req.body;
+    const file = req.file;
 
-    console.log('Received email:', email);
+    if (!file) {
+      return res.status(400).json({ error: 'No resume uploaded.' });
+    }
 
     try {
-      if (!file) {
-        return res.status(400).json({ error: 'No resume uploaded.' });
-      }
-
+      // Check if the user exists in MongoDB
       const user = await User.findOne({ email });
-      console.log('Found user:', user);
       if (!user) {
         return res.status(404).json({ error: 'User not found' });
       }
 
-      const filePath = path.join(__dirname, 'uploads', 'resumes', file.filename);
-      console.log('File path:', filePath);
-      
-      // Attempt to read the file to ensure it's accessible
-      try {
-        fs.accessSync(filePath); // This will throw if the file is not accessible
-        console.log(`Successfully accessed file at ${filePath}`);
-      } catch (err) {
-        console.error(`Error accessing file: ${err.message}`);
-        return res.status(500).json({ error: 'File access error' });
-      }
+      const filePath = path.join(file.destination, file.filename);
 
-      // Create a FormData instance and append the file
-      const formData = new FormData();
-      formData.append('file', fs.createReadStream(filePath)); // Send the file stream
-
-      // Get embeddings from the Flask server
-      const response = await axios.post('http://localhost:5000/get-embedding', formData, {
-        headers: formData.getHeaders() // Set the correct headers for multipart/form-data
+      // Upload file to Cloudinary
+      const cloudinaryResult = await cloudinary.uploader.upload(filePath, {
+        folder: 'resumes',
+        resource_type: 'raw',
       });
 
+      // Manually construct the Cloudinary URL using the public ID
+      const cloudinaryUrl = `https://res.cloudinary.com/dcra1zgrv/raw/upload/${cloudinaryResult.public_id}`;
+
+      // Create FormData and append file for embedding
+      const formData = new FormData();
+      formData.append('file', fs.createReadStream(filePath));
+
+      const response = await axios.post('http://localhost:5000/get-embedding', formData, {
+        headers: { ...formData.getHeaders() },
+      });
       const embeddings = response.data.embeddings[0];
 
-      // Ensure embeddings are of the correct dimension
-      if (!Array.isArray(embeddings) || embeddings.length !== 384) { // Change to 384 based on the model used
-        console.error('Invalid embeddings received:', embeddings);
+      if (!Array.isArray(embeddings) || embeddings.length !== 384) {
         return res.status(500).json({ error: 'Invalid embeddings format' });
       }
 
-      const common_id = "cvsmart"; 
+      const common_id = "cvsmart";
 
-      // Create the document to be indexed in Elasticsearch
+      // Check if the resume already exists for this user in Elasticsearch
+      const existingResume = await es.search({
+        index: 'resume_index',
+        body: {
+          query: {
+            match: { user_id: user._id.toString() }
+          }
+        }
+      });
+
+      // Prepare the document for Elasticsearch
       const doc = {
-        user_id: user._id.toString(), // Ensure this is a string for keyword type
+        user_id: user._id.toString(),
         file_name: file.originalname,
-        file_path: `uploads/resumes/${file.filename}`,  // Save the file path
         file_type: file.mimetype,
         location,
         posted_date: new Date(),
         common_id,
-        embeddings: embeddings, // Use the embeddings received from the Flask server
+        embeddings,
+        cloudinary_url: cloudinaryUrl, // Use the constructed Cloudinary URL here
       };
 
-      // Index the resume document in Elasticsearch
-      await es.index({
-        index: 'resume_index', 
-        body: doc,
-      });
-
-      res.status(200).json({ message: 'Resume and file added successfully!' });
+      if (existingResume.hits.hits.length > 0) {
+        // Document exists, update it
+        const docId = existingResume.hits.hits[0]._id;
+        await es.update({
+          index: 'resume_index',
+          id: docId,
+          body: { doc }
+        });
+        res.status(200).json({ message: 'Resume updated successfully!' });
+      } else {
+        // Document doesn't exist, add a new one
+        await es.index({
+          index: 'resume_index',
+          body: doc,
+        });
+        res.status(200).json({ message: 'Resume added successfully!' });
+      }
     } catch (err) {
       console.error(`Error adding resume: ${err.message}`);
       res.status(500).json({ error: 'Error adding resume' });

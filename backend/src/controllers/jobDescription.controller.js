@@ -1,87 +1,122 @@
-import { asyncHandler } from "../utils/asyncHandler.js";
+import { upload } from '../middlewares/multer.middleware.js';
 import { User } from '../models/user.models.js';
 import es from '../utils/elasticsearchClient.js';
 import fs from 'fs';
 import path from 'path';
-import { upload } from '../middlewares/multer.middleware.js';
+import cloudinary from '../utils/cloudinary.js';
 import axios from 'axios';
-import FormData from 'form-data'; // Import FormData to handle multipart/form-data
+import FormData from 'form-data';
+import { fileURLToPath } from 'url';
 
-// Define __dirname for ES modules
-const __dirname = path.resolve();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-const addJobDescription = [
-  upload.single('file'), // Use multer middleware to handle single file upload
+export const asyncHandler = (fn) => (req, res, next) => {
+  Promise.resolve(fn(req, res, next)).catch(next);
+};
+
+export const addJobDescription = [
+  upload.single('file'),
   asyncHandler(async (req, res) => {
-    const { email, location } = req.body;
+    const { email, location, commonId, status } = req.body;
     const file = req.file;
 
-    console.log('Received email:', email);
-    
-    try {
-      if (!file) {
-        return res.status(400).json({ error: 'No file uploaded.' });
-      }
-
-      const user = await User.findOne({ email });
-      console.log('Found user:', user);
-      if (!user) {
-        return res.status(404).json({ error: 'User not found' });
-      }
-
-      const filePath = path.join(__dirname, 'uploads', 'job_descriptions', file.filename);
-      console.log('File path:', filePath);
-      
-      // Attempt to read the file to ensure it's accessible
-      try {
-        fs.accessSync(filePath); // This will throw if the file is not accessible
-        console.log(`Successfully accessed file at ${filePath}`);
-      } catch (err) {
-        console.error(`Error accessing file: ${err.message}`);
-        return res.status(500).json({ error: 'File access error' });
-      }
-
-      // Create a FormData instance and append the file
-      const formData = new FormData();
-      formData.append('file', fs.createReadStream(filePath)); // Send the file stream
-
-      // Get embeddings from the Flask server
-      const response = await axios.post('http://localhost:5000/get-embedding', formData, {
-        headers: formData.getHeaders() // Set the correct headers for multipart/form-data
-      });
-
-      const embeddings = response.data.embeddings[0]; // Access the first array
-
-      // Ensure embeddings are of the correct dimension
-      if (!Array.isArray(embeddings) || embeddings.length !== 384) { // Adjust based on the actual length
-        console.error('Invalid embeddings received:', embeddings);
-        return res.status(500).json({ error: 'Invalid embeddings format' });
-      }
-
-      const common_id = "cvsmart"; 
-
-      // Create the document to be indexed in Elasticsearch
-      const doc = {
-        user_id: user._id.toString(), // Ensure this is a string for keyword type
-        file_name: file.originalname,
-        file_content: "Base64 or extracted content goes here", // If you're including file content
-        location,
-        posted_date: new Date(),
-        common_id,
-        embeddings: embeddings, // Use the embeddings received from the Flask server
-      };
-
-      await es.index({
-        index: 'job_description_index',
-        body: doc,
-      });
-
-      res.status(200).json({ message: 'Job Description and file added successfully!' });
-    } catch (err) {
-      console.error(`Error adding job description: ${err.message}`);
-      res.status(500).json({ error: 'Error adding job description' });
+    if (!file) {
+      console.error('No file uploaded.');
+      return res.status(400).json({ error: 'No file uploaded.' });
     }
-  })
-];
 
-export { addJobDescription };
+    try {
+      const user = await User.findOne({ email });
+      if (!user) {
+        return res.status(404).json({ error: 'User not found.' });
+      }
+
+      const filePath = path.join(__dirname, '..', 'uploads', 'job_descriptions', file.filename);
+      let cloudinaryUrl;
+
+      try {
+        // Upload file to Cloudinary
+        const cloudinaryResult = await cloudinary.uploader.upload(filePath, {
+          folder: 'job_descriptions',
+          resource_type: 'auto',
+        });
+        cloudinaryUrl = cloudinaryResult.secure_url;
+
+        // Prepare to send the uploaded file to get embeddings
+        const formData = new FormData();
+        formData.append('file', fs.createReadStream(filePath));
+
+        // Fetch embeddings
+        let embeddings;
+        try {
+          const response = await axios.post('http://localhost:5000/get-embedding', formData, {
+            headers: formData.getHeaders(),
+          });
+          embeddings = response.data.embeddings[0];
+          if (!Array.isArray(embeddings) || embeddings.length !== 384) {
+            console.error('Invalid embeddings format:', embeddings);
+            return res.status(500).json({ error: 'Invalid embeddings format.' });
+          }
+        } catch (err) {
+          console.error('Error fetching embeddings from Flask:', err);
+          return res.status(500).json({ error: 'Error fetching embeddings from Flask.', details: err.message });
+        }
+
+        // Clean up local file after upload
+        fs.unlinkSync(filePath);
+
+        // Check if a job description with the same commonId or file_name already exists
+        const existingJob = await es.search({
+          index: 'job_description_index',
+          query: {
+            bool: {
+              must: [
+                { match: { common_id: commonId } },
+                { match: { file_name: file.originalname } }
+              ]
+            }
+          }
+        });
+
+        const doc = {
+          user_id: user._id.toString(),
+          file_name: file.originalname,
+          file_url: cloudinaryUrl,
+          location,
+          posted_date: new Date(),
+          common_id: commonId,
+          status,
+          embeddings,
+          cloudinary_url: cloudinaryUrl,
+        };
+
+        if (existingJob.hits.total.value > 0) {
+          // Update the existing document
+          const existingJobId = existingJob.hits.hits[0]._id;
+          await es.update({
+            index: 'job_description_index',
+            id: existingJobId,
+            body: { doc },
+          });
+          res.status(200).json({ message: 'Job description updated successfully!' });
+        } else {
+          // Index a new document if no existing job found
+          const jobId = `${user._id.toString()}_${Date.now()}`;
+          await es.index({
+            index: 'job_description_index',
+            id: jobId,
+            body: doc,
+          });
+          res.status(200).json({ message: 'Job description and file added successfully!' });
+        }
+      } catch (err) {
+        console.error('Cloudinary upload error:', err);
+        return res.status(500).json({ error: 'Error uploading file to Cloudinary.', details: err.message });
+      }
+    } catch (err) {
+      console.error(`Error adding job description: ${err.message}`, err);
+      res.status(500).json({ error: 'Error adding job description.', details: err.message });
+    }
+  }),
+];

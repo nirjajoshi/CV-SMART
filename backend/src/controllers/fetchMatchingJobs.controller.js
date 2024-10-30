@@ -22,7 +22,6 @@ export const fetchMatchingJobs = async (commonId, userId) => {
             }
         });
 
-        // Log the resume result for debugging
         console.log('Resume result:', resumeResult);
 
         if (!resumeResult.hits.hits.length) {
@@ -46,7 +45,6 @@ export const fetchMatchingJobs = async (commonId, userId) => {
             }
         });
 
-        // Log the job result for debugging
         console.log('Job result:', jobResult);
 
         const matchedJobs = jobResult.hits.hits
@@ -62,12 +60,13 @@ export const fetchMatchingJobs = async (commonId, userId) => {
                     title: job._source.title || job._source.file_name,
                     location: job._source.location,
                     userId: job._source.user_id,
-                    similarity: similarity
+                    similarity: similarity,
+                    status: job._source.status,
+                    cloudinaryUrl: job._source.cloudinary_url // Fetching the Cloudinary URL from Elasticsearch
                 };
             })
-            .filter(job => job && job.similarity > 0.5); // Lower threshold to 0.5 for testing
+            .filter(job => job && job.similarity > 0.5);
 
-        // Log the matched jobs for debugging
         console.log('Matched jobs:', matchedJobs);
 
         if (!matchedJobs.length) {
@@ -77,16 +76,19 @@ export const fetchMatchingJobs = async (commonId, userId) => {
         // Fetch status from MongoDB for each matched job
         const finalResults = await Promise.all(
             matchedJobs.map(async (job) => {
-                const jobStatus = await User.findById(job.userId).select('status');
+                const jobInfo = await User.findById(job.userId).select('email fullname');
                 return {
                     id: job.id,
                     title: job.title,
                     location: job.location,
-                    fileUrl: `http://localhost:8000/uploads/job_descriptions/${encodeURIComponent(job.title)}`,
-                    status: jobStatus ? jobStatus.status : 'Unknown'
+                    cloudinaryUrl: job.cloudinaryUrl, // Use the Cloudinary URL fetched from Elasticsearch
+                    status: job.status,
+                    email: jobInfo ? jobInfo.email : 'Unknown',
+                    fullname: jobInfo ? jobInfo.fullname : 'Unknown'
+
                 };
             })
-        ).then(results => results.filter(Boolean)); // Filter out any null results
+        ).then(results => results.filter(Boolean)); 
 
         return finalResults;
 
@@ -96,7 +98,7 @@ export const fetchMatchingJobs = async (commonId, userId) => {
     }
 };
 
-// Cosine similarity calculation
+// Cosine similarity calculation remains the same
 const cosineSimilarity = (vecA, vecB) => {
     if (vecA.length !== vecB.length) {
         throw new Error("Vectors must be of the same length");
@@ -106,7 +108,7 @@ const cosineSimilarity = (vecA, vecB) => {
     const magnitudeB = Math.sqrt(vecB.reduce((sum, val) => sum + val * val, 0));
 
     if (magnitudeA === 0 || magnitudeB === 0) {
-        return 0; // Avoid division by zero
+        return 0; 
     }
 
     return dotProduct / (magnitudeA * magnitudeB);

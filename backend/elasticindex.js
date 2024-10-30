@@ -14,6 +14,8 @@ const resumeMapping = {
       file_name: { type: 'keyword' },
       file_content: { type: 'text' }, // Base64 encoded content
       location: { type: 'text' },
+      file_url: { type: 'text' },
+      cloudinary_url: { type: 'text' },
       upload_date: { type: 'date' },
       embeddings: {
         type: 'dense_vector',
@@ -33,13 +35,16 @@ const jobMapping = {
       file_name: { type: 'keyword' },
       file_content: { type: 'text' }, // Base64 encoded content
       location: { type: 'text' },
+      file_url: { type: 'text' },
+      cloudinary_url: { type: 'text' },
       embeddings: {
         type: 'dense_vector',
         dims: 384,
         similarity: 'cosine'
       },
       posted_date: { type: 'date' },
-      common_id: { type: 'keyword' } // New common identifier
+      common_id: { type: 'keyword' } ,
+      status: { type: 'keyword' }// New common identifier
     }
   }
 };
