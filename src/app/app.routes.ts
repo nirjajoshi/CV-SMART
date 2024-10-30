@@ -4,6 +4,7 @@ import { FindjobComponent } from './findjob/findjob.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { RegistrationComponent } from './registration/registration.component';
 import { HomeComponent } from './home/home.component';
+import { UpdateJobListingComponent } from './update-job-listing/update-job-listing.component';
 
 export const routes: Routes = [
     {
@@ -25,5 +26,8 @@ export const routes: Routes = [
     { 
         path: 'registration', 
         component: RegistrationComponent
+     },{
+        path:'update-job-listing',
+        component: UpdateJobListingComponent
      }
 ];

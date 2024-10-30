@@ -1,10 +1,13 @@
 import { Component, OnInit, ViewChild, ElementRef, Inject, PLATFORM_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Observable, Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { isPlatformBrowser } from '@angular/common';
+import{CandidateListingComponent}from '../candidate-listing/candidate-listing.component'
+import { Candidate } from '../candidate-listing/candidate.model';
+import { Router } from '@angular/router';
 
 interface City {
   name: string;
@@ -14,17 +17,23 @@ interface City {
 @Component({
   selector: 'app-findcand',
   standalone: true,
-  imports: [FormsModule,CommonModule, HttpClientModule],
+  imports: [FormsModule,CommonModule, HttpClientModule,CandidateListingComponent],
   templateUrl: './findcand.component.html',
   styleUrls: ['./findcand.component.css']
 })
   export class FindcandComponent implements OnInit {
     message: string = '';
     location: string = '';
+    status: string = '';
     jobdescriptionUploaded: boolean = false;
     cities: City[] = [];
     isUploading: boolean = false;
     uploadProgress: number = 0;
+
+
+    candidates: Candidate[] = [];
+    uploadSuccessful: boolean = false;
+    showCandidateList: boolean = false; 
   
     // File upload properties
     selectedFile: File | null = null;
@@ -36,12 +45,13 @@ interface City {
     filteredCities: City[] = [];
     activeSuggestionIndex: number = -1;
     userEmail: string = ''; // Store user email
+
   
     private searchSubject: Subject<string> = new Subject();
   
     @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
   
-    constructor(private http: HttpClient, @Inject(PLATFORM_ID) private platformId: Object) {}
+    constructor(private http: HttpClient, @Inject(PLATFORM_ID) private platformId: Object,private router: Router) {}
   
     ngOnInit(): void {
       this.loadCities();
@@ -56,6 +66,10 @@ interface City {
           console.error('Error parsing user details from localStorage:', error);
         }
       }
+    }
+
+    navigateToJobListing(): void {
+      this.router.navigate(['/update-job-listing']); // Adjust the path if needed
     }
   
     initializeSearch(): void {
@@ -80,9 +94,7 @@ interface City {
       return this.http.get<City[]>('assets/data/cities-india.json');
     }
   
-    findCandidates() {
-      console.log('Form is invalid.');
-    }
+    
   
     onFileSelected(event: Event): void {
       const input = event.target as HTMLInputElement;
@@ -120,36 +132,31 @@ interface City {
     }
   
     isFormValid(): boolean {
-      return this.location !== '' && this.fileChosen && !this.isUploading;
+      return this.selectedFile !== null && this.location.trim() !== '' && this.status.trim() !== '';
     }
   
     onSubmit(): void {
-      if (!this.isFormValid()) {
+      if (!this.isFormValid() || !this.selectedFile) {
         alert('Please select a file and enter a location.');
         return;
       }
     
-      // Create a new FormData object
       const formData = new FormData();
-      
-      // Append the selected file
-      formData.append('file', this.selectedFile!); // 'file' should match the name used in multer middleware
-      
-      // Append other data
-      formData.append('email', this.userEmail); 
+      formData.append('file', this.selectedFile);
+      formData.append('email', this.userEmail);
+      formData.append('status', this.status);
       formData.append('commonId', 'cvsmart');
       formData.append('location', this.location);
     
       console.log('Form Data:', formData);
-    
-      // No need to set 'Content-Type' header for FormData; the browser will automatically set it
+
       this.http.post('http://localhost:8000/api/v1/job_description/add_job_description', formData)
         .subscribe(
           (response: any) => {
             alert(response.message);
             this.message = 'Job description submitted successfully!';
-            this.removeFile();
-            this.location = '';
+            this.fileChosen = false;
+            this.uploadSuccessful = true;
           },
           (error: any) => {
             console.error('Error:', error);
@@ -157,7 +164,7 @@ interface City {
           }
         );
     }
-  
+
     removeFile(): void {
       this.resetFileInput();
     }
@@ -182,6 +189,39 @@ interface City {
       this.location = city.name;
       this.showSuggestions = false;
       this.filteredCities = [];
+    }
+
+    fetchCandidates(): void {
+      const userDetails = JSON.parse(localStorage.getItem('userDetails') || '{}');
+      const userId = userDetails.id || '';  // Use 'id' here
+      const commonId = 'cvsmart';  // This can be dynamic if needed
+      const apiUrl = `http://localhost:8000/api/v1//matching-candidates?userId=${userId}&commonId=${commonId}`;
+      
+      console.log('Fetching candidates for userId:', userId);
+      console.log('API URL:', apiUrl);
+    
+      this.http.get<Candidate[]>(apiUrl).subscribe(
+        (response: Candidate[]) => {
+          console.log('Received candidate response:', response);
+          this.candidates = response;  // Assuming candidates is a property in your component
+          this.showCandidateList = true;  // Toggle visibility of the candidate list if needed
+        },
+        (error) => {
+          console.error('Error fetching candidates:', error.message || error);
+          alert('An error occurred while fetching candidate listings.');
+        }
+      );
+    }
+
+
+    findCandidates(): void {
+      console.log('isFormValid:', this.isFormValid(), 'uploadSuccessful:', this.uploadSuccessful);
+      
+      if (this.isFormValid() && this.uploadSuccessful) {
+        this.fetchCandidates();
+      } else {
+        console.log('Form is invalid. Please ensure all fields are filled out correctly.');
+      }
     }
   
     hideSuggestions(): void {

@@ -12,15 +12,18 @@ export class JobListingComponent {
  // Accept jobs as an input from the parent component
  @Input() jobs: any[] = [];
 
+ private constantApplyUrl = "https://careers.jio.com/frmJobCategories.aspx?flag=/wASbQn4xyQ="
+
  // Function to handle applying for a job
  apply(jobId: string) {
-   console.log('Applying for job with ID:', jobId);
-   // You can trigger the apply action here (e.g., calling an API)
+  console.log('Applying for job with ID:', jobId);
+  // Open the constant apply URL in a new tab
+  window.open(this.constantApplyUrl, '_blank');
  }
 
  // Function to handle viewing job description
- viewJobDescription(fileUrl: string) {
-   window.open(fileUrl, '_blank'); // Opens the file in a new browser tab
+ viewJobDescription(cloudinaryUrl: string) {
+  window.open(cloudinaryUrl, '_blank'); // Opens the file in a new browser tab
  }
 
 

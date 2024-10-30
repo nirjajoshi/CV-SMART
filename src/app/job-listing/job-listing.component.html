@@ -1,6 +1,16 @@
 <div *ngIf="jobs.length > 0; else noJobs">
   <div *ngFor="let job of jobs" class="job-card">
     <h3>{{ job.title }}</h3>
+    <p>
+      Email: 
+      <a 
+        [href]="'https://mail.google.com/mail/?view=cm&fs=1&to=' + job.email" 
+        target="_blank"
+      >
+        {{ job.email }}
+      </a>
+    </p>
+    <p>Company name: {{ job.fullname}}</p>
     <p>Location: {{ job.location }}</p>
     <p>
       Status:
@@ -13,7 +23,7 @@
     </p>
 
     <!-- View Job Description and Apply buttons -->
-    <button (click)="viewJobDescription(job.fileUrl)">View Job Description</button>
+    <button (click)="viewJobDescription(job.cloudinaryUrl)">View Job Description</button>
     <button (click)="apply(job.id)">Apply</button>
   </div>
 </div>

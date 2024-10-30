@@ -1,8 +1,12 @@
 <div class="wrapper">
   <div class="search-container">
+
+    <!-- Job Description Upload Section -->
     <div class="resume-card">
       <h2>Add your Job Description</h2>
+
       <div class="button-container">
+        <!-- Hidden File Input -->
         <input 
           type="file" 
           id="fileInput" 
@@ -11,19 +15,29 @@
           #fileInput
           style="display: none;"
         />
+
+        <!-- Custom Button to Trigger File Input -->
         <label *ngIf="!fileChosen" for="fileInput" class="custom-file-upload">
           Choose File
         </label>
+
+        <!-- Display Selected File Name -->
         <span class="file-name" *ngIf="fileChosen">{{ selectedFileName }}</span>
+
+        <!-- Button to Remove Selected File -->
         <button class="remove-file-button" *ngIf="fileChosen" (click)="removeFile()">
           &times;
         </button>
       </div>
+      <!-- Display message for success or errors -->
       <p>{{ message }}</p>
     </div>
 
+    <!-- Location Input Section -->
     <div class="location-card">
       <h2>Enter Location</h2>
+
+      <!-- Location Input with Suggestions -->
       <input 
         type="text" 
         placeholder="Location" 
@@ -32,6 +46,8 @@
         (blur)="hideSuggestions()" 
         (keydown)="onKeyDown($event)"
       />
+
+      <!-- Suggestions List for Auto-complete -->
       <ul class="suggestions-list" *ngIf="showSuggestions">
         <li 
           *ngFor="let city of filteredCities; let i = index" 
@@ -43,21 +59,38 @@
       </ul>
     </div>
 
-       <!-- New submit button added here -->
-       <button 
-       class="submit-button" 
-       (click)="onSubmit()" 
-       [disabled]="!isFormValid()"
-     >
-       Submit
-     </button>
+    <!-- Status Field -->
+    <div class="status-card">
+      <h2>Select Status</h2>
+      <select [(ngModel)]="status">
+        <option value="hiring">Hiring</option>
+        <option value="not_hiring">Not Hiring</option>
+      </select>
+    </div>
+
+    <!-- Submit and Find Candidate Buttons -->
+    <button 
+      class="submit-button" 
+      (click)="onSubmit()" 
+      [disabled]="!isFormValid()"
+      enctype="multipart/form-data"
+    >
+      Submit
+    </button>
+
+    <!-- Existing code -->
+   <button class="manage-button " (click)="navigateToJobListing()">Manage Job Listings</button>
+
 
     <button 
       class="find-Candidate-button" 
-      (click)="findCandidates()" 
-      [disabled]="!isFormValid()"
+      (click)=" findCandidates()" 
+      [disabled]="!isFormValid() || !uploadSuccessful"
     >
       Find Candidate
     </button>
+
+  <app-candidate-listing *ngIf="showCandidateList" [candidates]="candidates"></app-candidate-listing>
+
   </div>
 </div>

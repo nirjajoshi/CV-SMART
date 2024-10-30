@@ -1,0 +1,21 @@
+<div *ngIf="candidates.length > 0; else noCandidates">
+  <div *ngFor="let candidate of candidates" class="candidate-card">
+    <h3>{{ candidate.fullName }}</h3>
+    <p>Email: {{ candidate.email }}</p>
+    <p>
+      Status:
+      <span [ngClass]="{
+          'active-status': candidate.status === 'open_to_network',
+          'inactive-status': candidate.status === 'not_open_to_network'
+      }">
+        {{ candidate.status }}
+      </span>
+    </p>
+    <button (click)="viewResume(candidate.cloudinaryUrl)">Download Resume</button>
+    <button (click)="contactCandidate(candidate.email)">Contact Candidate</button>
+  </div>
+</div>
+
+<ng-template #noCandidates>
+  <p>No candidates found. Please try again later.</p>
+</ng-template>

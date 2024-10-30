@@ -1,0 +1,27 @@
+<h2>Update Job Listings</h2>
+<div class="job-list-container">
+<table class="job-table">
+  <thead>
+    <tr>
+      <th>Job Title</th>
+      <th>Status</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let job of updatejobs">
+      <td>{{ job.title }}</td>
+      <td>
+        <select [(ngModel)]="job.status">
+          <option value="hiring">Hiring</option>
+          <option value="not_hiring">Not Hiring</option>
+          <!-- Add more statuses if needed -->
+        </select>
+      </td>
+      <td>
+        <button (click)="updateJobStatus(job.id, job.status)">Update Status</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>

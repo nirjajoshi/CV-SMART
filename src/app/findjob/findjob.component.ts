@@ -147,13 +147,13 @@ export class FindjobComponent implements OnInit {
                     .subscribe(
                         (response: any) => {
                             alert(response.message);
-                            this.message = 'Job description submitted successfully!';
+                            this.message = 'Resume submitted successfully!';
                             this.uploadSuccessful = true;
                             this.fileChosen = false;
                         },
                         (error: any) => {
                             console.error('Error:', error);
-                            alert('An error occurred while submitting the job description.');
+                            alert('An error occurred while submitting the resume.');
                         }
                     );
             },

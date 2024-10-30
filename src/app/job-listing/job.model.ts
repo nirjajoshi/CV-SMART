@@ -1,7 +1,9 @@
 export interface Job {
   id: string;
   title: string;
+  fullname: string;
   location: string;
   status: string;
-  fileUrl: string;
+  email: string;
+  cloudinaryUrl: string;
 }

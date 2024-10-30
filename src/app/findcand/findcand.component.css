@@ -25,7 +25,7 @@ body, html {
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   }
   
-  .resume-card, .location-card {
+  .resume-card, .location-card, .status-card {
     margin-bottom: 20px;
   }
   
@@ -125,6 +125,30 @@ body, html {
   .submit-button:hover {
     background-color: #45a049; /* Darker green on hover */
   }
+  .manage-button {
+    background-color: #007bff; /* Primary blue color */
+    color: white; /* Text color */
+    padding: 10px 20px; /* Spacing inside the button */
+    font-size: 16px; /* Font size */
+    font-weight: bold; /* Bold text */
+    border: none; /* Remove default border */
+    border-radius: 8px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+    transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
+  }
+  
+  .manage-button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Stronger shadow on hover */
+  }
+  
+  .manage-button:active {
+    background-color: #004494; /* Even darker blue on click */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Reduced shadow on click */
+    transform: translateY(2px); /* Slightly moves button down */
+  }
+  
   
   .message {
     color: green;
