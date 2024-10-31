@@ -1,23 +1,17 @@
-import es from '../utils/elasticsearchClient.js';// Updated to use ES6 import syntax
+import JobDescription  from '../models/jobdescription.models.js'; // Import JobDescription model
 
 // Fetch all job descriptions
 export const getJobs = async (req, res) => {
     try {
-        const response = await es.search({
-            index: 'job_description_index',
-            size: 1000,
-            query: {
-                match_all: {}
-            }
-        });
+        const jobs = await JobDescription.find({}).limit(1000); // Fetch all jobs with a limit
 
-        const jobs = response.hits.hits.map(hit => ({
-            id: hit._id,
-            title: hit._source.file_name || 'No title available', // Adjust this based on your actual field name
-            status: hit._source.status || 'Unknown'
+        const formattedJobs = jobs.map(job => ({
+            id: job._id,
+            title: job.file_name || 'No title available', // Adjust based on your actual field name
+            status: job.status || 'Unknown'
         }));
 
-        res.json(jobs);
+        res.json(formattedJobs);
     } catch (error) {
         console.error("Error fetching jobs:", error);
         res.status(500).json({ message: "Error fetching jobs", error });
@@ -30,13 +24,14 @@ export const updateJobStatus = async (req, res) => {
     const { status } = req.body;
 
     try {
-        await es.update({
-            index: 'job_description_index',
-            id: jobId,
-            doc: { status }
-        });
+        // Update the job status in MongoDB
+        const updatedJob = await JobDescription.findByIdAndUpdate(jobId, { status }, { new: true });
 
-        res.json({ message: "Status updated successfully" });
+        if (!updatedJob) {
+            return res.status(404).json({ message: "Job not found" });
+        }
+
+        res.json({ message: "Status updated successfully", job: updatedJob });
     } catch (error) {
         console.error("Error updating status:", error);
         res.status(500).json({ message: "Error updating status", error });

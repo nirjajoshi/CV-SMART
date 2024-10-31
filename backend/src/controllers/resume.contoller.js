@@ -1,6 +1,6 @@
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { User } from '../models/user.models.js';
-import es from '../utils/elasticsearchClient.js'; // Import Elasticsearch client
+import { Resume } from '../models/resume.models.js'; // Import the Resume model
 import { uploadResume } from '../middlewares/resume.middleware.js'; // Import resume multer config
 import fs from 'fs';
 import path from 'path';
@@ -43,7 +43,7 @@ const addResume = [
       const formData = new FormData();
       formData.append('file', fs.createReadStream(filePath));
 
-      const response = await axios.post('http://localhost:5000/get-embedding', formData, {
+      const response = await axios.post('https://cvsmart-flaskapp-1.onrender.com/get-embedding', formData, {
         headers: { ...formData.getHeaders() },
       });
       const embeddings = response.data.embeddings[0];
@@ -54,43 +54,29 @@ const addResume = [
 
       const common_id = "cvsmart";
 
-      // Check if the resume already exists for this user in Elasticsearch
-      const existingResume = await es.search({
-        index: 'resume_index',
-        body: {
-          query: {
-            match: { user_id: user._id.toString() }
-          }
-        }
-      });
+      // Check if the resume already exists for this user in MongoDB
+      const existingResume = await Resume.findOne({ user_id: user._id });
 
-      // Prepare the document for Elasticsearch
+      // Prepare the document for MongoDB
       const doc = {
-        user_id: user._id.toString(),
+        user_id: user._id,
         file_name: file.originalname,
         file_type: file.mimetype,
         location,
         posted_date: new Date(),
         common_id,
         embeddings,
-        cloudinary_url: cloudinaryUrl, // Use the constructed Cloudinary URL here
+        cloudinary_url: cloudinaryUrl,
       };
 
-      if (existingResume.hits.hits.length > 0) {
+      if (existingResume) {
         // Document exists, update it
-        const docId = existingResume.hits.hits[0]._id;
-        await es.update({
-          index: 'resume_index',
-          id: docId,
-          body: { doc }
-        });
+        existingResume.set(doc); // Use set to update the document
+        await existingResume.save();
         res.status(200).json({ message: 'Resume updated successfully!' });
       } else {
         // Document doesn't exist, add a new one
-        await es.index({
-          index: 'resume_index',
-          body: doc,
-        });
+        await Resume.create(doc);
         res.status(200).json({ message: 'Resume added successfully!' });
       }
     } catch (err) {

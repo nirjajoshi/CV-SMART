@@ -1,5 +1,6 @@
-import es from '../utils/elasticsearchClient.js';
 import { User } from '../models/user.models.js';
+import JobDescription  from '../models/jobdescription.models.js'; // Assuming you have a JobDescription model
+import { Resume } from '../models/resume.models.js'; // Import the Resume model
 
 export const fetchMatchingCandidates = async (commonId, userId) => {
     if (!commonId || !userId) {
@@ -7,47 +8,31 @@ export const fetchMatchingCandidates = async (commonId, userId) => {
     }
 
     try {
-        // Fetch the job description embeddings from job_description_index
-        const jobResult = await es.search({
-            index: 'job_description_index',
-            body: {
-                query: {
-                    bool: {
-                        must: [
-                            { match: { common_id: commonId } },
-                            { match: { user_id: userId } }
-                        ]
-                    }
-                }
-            }
+        // Fetch the job description embeddings from MongoDB
+        const jobResult = await JobDescription.findOne({
+            common_id: commonId,
+            user_id: userId
         });
 
         console.log('Job result:', jobResult);
 
-        if (!jobResult.hits.hits.length) {
+        if (!jobResult) {
             return { message: 'Job description not found for the provided commonId and userId' };
         }
 
-        const jobEmbeddings = jobResult.hits.hits[0]._source.embeddings;
+        const jobEmbeddings = jobResult.embeddings;
         if (!Array.isArray(jobEmbeddings) || jobEmbeddings.length === 0) {
             return { message: 'Job description embeddings are invalid' };
         }
 
-        // Fetch resumes and their embeddings from resume_index
-        const resumeResult = await es.search({
-            index: 'resume_index',
-            body: {
-                query: {
-                    match_all: {}
-                }
-            }
-        });
+        // Fetch resumes from MongoDB
+        const resumeResults = await Resume.find({});
 
-        console.log('Resume result:', resumeResult);
+        console.log('Resume results:', resumeResults);
 
-        const matchedCandidates = resumeResult.hits.hits
+        const matchedCandidates = resumeResults
             .map((resume) => {
-                const resumeEmbeddings = resume._source.embeddings;
+                const resumeEmbeddings = resume.embeddings;
                 if (!Array.isArray(resumeEmbeddings) || resumeEmbeddings.length === 0) {
                     return null; // Skip invalid resume embeddings
                 }
@@ -55,9 +40,9 @@ export const fetchMatchingCandidates = async (commonId, userId) => {
                 const similarity = cosineSimilarity(jobEmbeddings, resumeEmbeddings);
                 return {
                     id: resume._id,
-                    userId: resume._source.user_id,
+                    userId: resume.user_id,
                     similarity: similarity,
-                    cloudinaryUrl: resume._source.cloudinary_url // Fetching the Cloudinary URL from Elasticsearch
+                    cloudinaryUrl: resume.cloudinary_url // Fetching the Cloudinary URL from MongoDB
                 };
             })
             .filter(candidate => candidate && candidate.similarity > 0.5);

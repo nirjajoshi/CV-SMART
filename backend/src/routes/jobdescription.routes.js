@@ -7,6 +7,4 @@ const router = Router();
 // Endpoint to add job description
 router.post('/add_job_description',addJobDescription);
 
-export default (req, res) => {
-    router(req, res); // Delegate request handling to the router
-};
+export default router;

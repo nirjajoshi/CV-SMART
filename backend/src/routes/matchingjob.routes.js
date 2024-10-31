@@ -1,5 +1,5 @@
 import express from 'express';
-import { fetchMatchingJobs } from '../controllers/fetchMatchingJobs.controller.js';
+import { fetchJobsForCandidate  } from '../controllers/fetchMatchingJobs.controller.js';
 
 const router = express.Router();
 
@@ -15,7 +15,7 @@ router.get('/matching-jobs', async (req, res) => {
 
     try {
         // Call the function with both commonId and userId
-        const jobs = await fetchMatchingJobs(commonId, userId);
+        const jobs = await fetchJobsForCandidate (commonId, userId);
         res.status(200).json(jobs);
     } catch (error) {
         console.error('Error fetching matching jobs:', error);
@@ -23,6 +23,4 @@ router.get('/matching-jobs', async (req, res) => {
     }
 });
 
-export default (req, res) => {
-    router(req, res); // Delegate request handling to the router
-};
+export default router;
