@@ -23,4 +23,6 @@ router.get('/matching-candidates', async (req, res) => {
     }
 });
 
-export default router;
+export default (req, res) => {
+    router(req, res); // Delegate request handling to the router
+};

@@ -6,3 +6,7 @@ pydantic
 requests
 transformers
 torch
+Flask
+sentence-transformers
+PyPDF2
+python-docx

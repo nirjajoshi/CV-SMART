@@ -6,4 +6,6 @@ const router = express.Router();
 // Route to upload and index resumes
 router.post('/uploadResume',addResume);
 
-export default router;
+export default (req, res) => {
+    router(req, res); // Delegate request handling to the router
+};

@@ -1,0 +1,27 @@
+{
+    "version": 2,
+    "builds": [
+      {
+        "src": "backend/src/app.js",
+        "use": "@vercel/node"
+      },
+      {
+        "src": "backend/src/utils/embeddings.py",
+        "use": "@vercel/python"
+      }
+    ],
+    "routes": [
+      {
+        "src": "/api/(.*)",
+        "dest": "backend/src/app.js"
+      },
+      {
+        "src": "/get-embedding",
+        "dest": "backend/src/utils/embeddings.py"
+      }
+    ],
+    "env": {
+        "CORS_ORIGIN": "*"  
+      }
+  }
+  

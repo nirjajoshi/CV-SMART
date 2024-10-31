@@ -19,4 +19,6 @@ router.get('/get-user-id', async (req, res) => {
     }
 });
 
-export default router;
+export default (req, res) => {
+    router(req, res); // Delegate request handling to the router
+};

@@ -9,4 +9,6 @@ router.get('/jobs', getJobs);
 // Route to update the status of a job description
 router.put('/jobs/:id/status', updateJobStatus);
 
-export default router;
+export default (req, res) => {
+    router(req, res); // Delegate request handling to the router
+};
