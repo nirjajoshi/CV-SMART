@@ -140,6 +140,7 @@ interface City {
         alert('Please select a file and enter a location.');
         return;
       }
+      this.isUploading = true;
     
       const formData = new FormData();
       formData.append('file', this.selectedFile);
@@ -157,10 +158,12 @@ interface City {
             this.message = 'Job description submitted successfully!';
             this.fileChosen = false;
             this.uploadSuccessful = true;
+            this.isUploading = false; 
           },
           (error: any) => {
             console.error('Error:', error);
             alert('An error occurred while submitting the job description.');
+            this.isUploading = false; 
           }
         );
     }

@@ -16,6 +16,8 @@ export class RegistrationComponent {
   submitted = false;
   serverError: string = '';
   serverSuccess: string = '';
+  isLoading = false;
+  
 
 
   // Define status options
@@ -57,6 +59,7 @@ export class RegistrationComponent {
     this.submitted=true;
     this.serverError = '';
     this.serverSuccess = '';
+    this.isLoading = true;
     if(this.registrationForm.valid){
       const payload = {
         email: this.f['email'].value,
@@ -71,16 +74,19 @@ export class RegistrationComponent {
           this.serverSuccess = response.message || 'Registration successful!';
           this.registrationForm.reset();
           this.submitted = false;
+          this.isLoading = false;
           this.router.navigate(['']);
         },
         error: (error) => {
           console.error('Registration error:', error);
           this.serverError = error.error.message || 'An error occurred during registration.';
+          this.isLoading = false;
         }
       });
 
     }else{
       console.log('Form is Invalid ')
+      this.isLoading = false;
     }
   }
 

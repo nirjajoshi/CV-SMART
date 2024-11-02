@@ -2,7 +2,7 @@
   <div class="search-container">
     <div class="resume-card">
       <h2>Add your Resume</h2>
-      <h2>Please add docx file since we had no money for pdf upload :(</h2>
+      <h2>We only accept .docx file format</h2>
       <div class="button-container">
         <input 
           type="file" 
@@ -43,10 +43,14 @@
     </div>
 
     <!-- New submit button added here -->
-<button 
+    <button 
     class="submit-button" 
     (click)="onSubmit()" 
-    [disabled]="!isFormValid()"> Submit</button>
+    [disabled]="!isFormValid() || isUploading">
+    <span *ngIf="isUploading">Submitting...</span>
+    <span *ngIf="!isUploading">Submit</span>
+    <span *ngIf="isUploading" class="spinner"></span>
+</button>
 
   <button 
     class="find-job-button" 

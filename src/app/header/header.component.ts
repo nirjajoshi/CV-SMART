@@ -48,6 +48,7 @@ export class HeaderComponent implements OnInit {
   isAdmin = false;
   isCandidate = false;
   isCompany = false;
+  isLoading: boolean = false;
 
   constructor(private http: HttpClient, private router: Router) {}
 
@@ -109,6 +110,7 @@ export class HeaderComponent implements OnInit {
       alert('Please enter both email and password.');
       return;
     }
+    this.isLoading = true;
   
     // Make HTTP POST request to login
     this.http.post<LoginResponse>('https://cv-smart-backend.onrender.com/api/v1/users/login', this.loginData).subscribe(
@@ -141,6 +143,7 @@ export class HeaderComponent implements OnInit {
         // Handle login error
         alert('Login failed: ' + (error.error.message || 'Please try again.'));
         console.error('Login error:', error); // For debugging
+        this.isLoading = false; 
       }
     );
   }

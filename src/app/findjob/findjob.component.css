@@ -18,7 +18,7 @@ body, html {
   margin-top: 80px;
   display: flex;
   flex-direction: column;
-  width: 400px; /* Base width */
+  width: 400px;
   border: 1px solid #ddd;
   padding: 20px;
   border-radius: 8px;
@@ -113,17 +113,37 @@ input[type="text"] {
 }
 
 .submit-button {
-  background-color: #4CAF50; /* Green */
+  background-color: #4CAF50;
   color: white;
   padding: 10px 15px;
   border: none;
-  border-radius: 5px;
+  border-radius: 4px;
   cursor: pointer;
-  margin-bottom: 10px; /* Adds space between the submit and find candidate buttons */
+  margin-bottom: 10px; 
+  position: relative;
+  padding-right: 30px;
+  width: 100%;
+}
+
+.spinner {
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-left-color: #ffffff;
+  border-radius: 50%;
+  width: 14px;
+  height: 14px;
+  animation: spin 1s linear infinite;
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 .submit-button:hover {
-  background-color: #45a049; /* Darker green on hover */
+  background-color: #45a049;
 }
 
 .message {
@@ -134,41 +154,52 @@ input[type="text"] {
 /* Responsive styles */
 @media (max-width: 768px) {
   .search-container {
-      width: 90%; /* Use a percentage width on smaller screens */
-      margin: 20px; /* Reduce top margin */
+      width: 90%;
+      margin: 20px;
   }
 
   h2 {
-      font-size: 16px; /* Smaller font size for headings */
+      font-size: 16px;
   }
 
   .custom-file-upload {
-      padding: 8px 15px; /* Smaller padding for buttons */
+      padding: 8px 15px;
   }
 
   input[type="text"] {
-      padding: 8px; /* Reduce padding for input fields */
+      padding: 8px;
   }
 
   .resume-card, .location-card {
-      margin-bottom: 15px; /* Reduce margin between cards */
+      margin-bottom: 15px;
   }
 
   .button-container {
-      flex-direction: column; /* Stack buttons vertically */
-      align-items: stretch; /* Stretch buttons to fill width */
+      flex-direction: column;
+      align-items: stretch;
   }
 
   .submit-button, .find-job-button {
-      width: 100%; /* Full-width buttons */
-      margin-bottom: 10px; /* Space between buttons */
+      width: 100%;
+      margin-bottom: 10px;
   }
 
   .file-name {
-      font-size: 12px; /* Smaller font size for file name */
+      font-size: 12px;
   }
 
   .suggestions-list {
-      max-height: 100px; /* Reduce the height of suggestions */
+      max-height: 100px;
+  }
+
+  .submit-button {
+      padding-right: 20px;
+  }
+
+  .spinner {
+      width: 12px; /* Smaller spinner size for mobile */
+      height: 12px;
+      right: 8px;
+      border-width: 2px;
   }
 }

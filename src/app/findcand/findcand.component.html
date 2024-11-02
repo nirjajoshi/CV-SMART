@@ -70,12 +70,12 @@
 
     <!-- Submit and Find Candidate Buttons -->
     <button 
-      class="submit-button" 
-      (click)="onSubmit()" 
-      [disabled]="!isFormValid()"
-      enctype="multipart/form-data"
-    >
-      Submit
+    class="submit-button" 
+    (click)="onSubmit()" 
+    [disabled]="!isFormValid() || isUploading">
+    <span *ngIf="isUploading">Submitting...</span>
+    <span *ngIf="!isUploading">Submit</span>
+    <span *ngIf="isUploading" class="spinner"></span>
     </button>
 
     <!-- Existing code -->

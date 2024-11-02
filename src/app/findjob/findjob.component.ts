@@ -125,6 +125,7 @@ export class FindjobComponent implements OnInit {
         alert('Please select a file and enter a location.');
         return;
     }
+    this.isUploading = true;
 
     // Fetch the user ID using the email before submitting the form
     this.http.get<{ userId: string }>(`https://cv-smart-backend.onrender.com/api/v1/userid/get-user-id?email=${this.userEmail}`)
@@ -150,16 +151,19 @@ export class FindjobComponent implements OnInit {
                             this.message = 'Resume submitted successfully!';
                             this.uploadSuccessful = true;
                             this.fileChosen = false;
+                            this.isUploading = false; 
                         },
                         (error: any) => {
                             console.error('Error:', error);
                             alert('An error occurred while submitting the resume.');
+                            this.isUploading = false;
                         }
                     );
             },
             (error: any) => {
                 console.error('Error fetching user ID:', error);
                 alert('An error occurred while fetching user ID.');
+                this.isUploading = false;
             }
         );
 }

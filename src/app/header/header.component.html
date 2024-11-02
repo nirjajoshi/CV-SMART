@@ -75,8 +75,16 @@
         <label for="password">Password</label>
         <input id="password" [(ngModel)]="loginData.password" type="password" placeholder="Enter your password" />
       </div>
-      <button (click)="login()">Login</button>
+      
+      <!-- Spinner Element -->
+      <div *ngIf="isLoading" class="spinner">
+        <div class="double-bounce1"></div>
+        <div class="double-bounce2"></div>
+      </div>
+      
+      <button type="submit" (click)="login()" [disabled]="isLoading">Login</button>
       <span class="close-modal" (click)="toggleLoginModal()">×</span>
     </div>
   </div>
+  
 </nav>
