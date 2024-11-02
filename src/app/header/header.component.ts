@@ -111,7 +111,7 @@ export class HeaderComponent implements OnInit {
     }
   
     // Make HTTP POST request to login
-    this.http.post<LoginResponse>('https://cv-smart-l56k8qczd-nirja-joshis-projects.vercel.app/api/v1/users/login', this.loginData).subscribe(
+    this.http.post<LoginResponse>('https://cv-smart-backend.onrender.com/api/v1/users/login', this.loginData).subscribe(
       (response) => {
         // Check for valid response
         if (response && response.accessToken && response.user) {
@@ -148,7 +148,7 @@ export class HeaderComponent implements OnInit {
   // Logout method
   logout() {
     if (this.userDetails && this.userDetails.id) {
-      this.http.post<LogoutResponse>('https://cv-smart-nirja-joshis-projects.vercel.app/api/v1/users/logout', { userId: this.userDetails.id }).subscribe(
+      this.http.post<LogoutResponse>('https://cv-smart-backend.onrender.com/api/v1/users/logout', { userId: this.userDetails.id }).subscribe(
         (response) => {
           console.log(response.message); // Optionally log the message
           this.clearAuthentication();
@@ -180,7 +180,7 @@ export class HeaderComponent implements OnInit {
   // Save Status method
   saveStatus() {
     if (this.selectedStatus && this.userDetails.id) {
-      this.http.post<UpdateStatusResponse>('https://cv-smart-nirja-joshis-projects.vercel.app/api/v1/users/save-status', {
+      this.http.post<UpdateStatusResponse>('https://cv-smart-backend.onrender.com/api/v1/users/save-status', {
         userId: this.userDetails.id,
         status: this.selectedStatus,
       }).subscribe(
