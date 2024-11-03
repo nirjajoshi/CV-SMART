@@ -156,6 +156,7 @@ export class FindjobComponent implements OnInit {
                         (error: any) => {
                             console.error('Error:', error);
                             alert('An error occurred while submitting the resume.');
+                            alert(`An error occurred while submitting the resume: ${error.message || 'Unknown error'}`);
                             this.isUploading = false;
                         }
                     );

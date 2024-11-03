@@ -80,7 +80,7 @@ export class HeaderComponent implements OnInit {
       this.isCandidate = false;
       this.isAdmin = false; 
     } else {
-      this.isAdmin = false;
+      this.isAdmin = true;
       this.isCandidate = false;
       this.isCompany = false;
     }
