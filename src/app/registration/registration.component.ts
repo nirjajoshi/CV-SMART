@@ -68,7 +68,7 @@ export class RegistrationComponent {
         role: this.f['role'].value,
         status: this.f['status'].value
       };
-      this.http.post<any>('https://cv-smart-backend.vercel.app/api/v1/users/register', payload).subscribe({
+      this.http.post<any>('https://cv-smart-backend.onrender.com/api/v1/users/register', payload).subscribe({
         next: (response) => {
           console.log('Registration successful:', response);
           this.serverSuccess = response.message || 'Registration successful!';

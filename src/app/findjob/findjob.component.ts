@@ -128,7 +128,7 @@ export class FindjobComponent implements OnInit {
     this.isUploading = true;
 
     // Fetch the user ID using the email before submitting the form
-    this.http.get<{ userId: string }>(`https://cv-smart-backend.vercel.app/api/v1/userid/get-user-id?email=${this.userEmail}`)
+    this.http.get<{ userId: string }>(`https://cv-smart-backend.onrender.com/api/v1/userid/get-user-id?email=${this.userEmail}`)
         .subscribe(
             (response: { userId: string }) => {
                 const userId = response.userId;
@@ -144,7 +144,7 @@ export class FindjobComponent implements OnInit {
                 console.log('Form Data:', formData);
 
                 // Submit the form data with userId included
-                this.http.post('https://cv-smart-backend.vercel.app/api/v1/resume/uploadResume', formData)
+                this.http.post('https://cv-smart-backend.onrender.com/api/v1/resume/uploadResume', formData)
                     .subscribe(
                         (response: any) => {
                             alert(response.message);
@@ -200,7 +200,7 @@ export class FindjobComponent implements OnInit {
     const userId = userDetails.id || '';  // Use 'id' here
   
     const commonId = 'cvsmart';
-    const apiUrl = `https://cv-smart-backend.vercel.app/api/v1/matching-jobs?userId=${userId}&commonId=${commonId}`;
+    const apiUrl = `https://cv-smart-backend.onrender.com/api/v1/matching-jobs?userId=${userId}&commonId=${commonId}`;
     
     console.log('Fetching jobs for userId:', userId);
     console.log('API URL:', apiUrl);
