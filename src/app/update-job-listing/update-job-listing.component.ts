@@ -23,7 +23,7 @@ export class UpdateJobListingComponent {
     this.fetchupdateJobs();
   }
     fetchupdateJobs(): void {
-      this.http.get<updateJob[]>('https://cv-smart-backend.onrender.com/api/v1/jobs')
+      this.http.get<updateJob[]>('https://cv-smart-backend.vercel.app/api/v1/jobs')
         .subscribe(
           (response: updateJob[]) => {
             this.updatejobs = response;
@@ -35,7 +35,7 @@ export class UpdateJobListingComponent {
     }
 
     updateJobStatus(jobId: string, newStatus: string): void {
-      const apiUrl = `https://cv-smart-backend.onrender.com/api/v1/jobs/${jobId}/status`;
+      const apiUrl = `https://cv-smart-backend.vercel.app/api/v1/jobs/${jobId}/status`;
       this.http.put(apiUrl, { status: newStatus })
         .subscribe(
           () => {

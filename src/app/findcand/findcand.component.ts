@@ -151,7 +151,7 @@ interface City {
     
       console.log('Form Data:', formData);
 
-      this.http.post('https://cv-smart-backend.onrender.com/api/v1/job_description/add_job_description', formData)
+      this.http.post('https://cv-smart-backend.vercel.app/api/v1/job_description/add_job_description', formData)
         .subscribe(
           (response: any) => {
             alert(response.message);
@@ -198,7 +198,7 @@ interface City {
       const userDetails = JSON.parse(localStorage.getItem('userDetails') || '{}');
       const userId = userDetails.id || '';  // Use 'id' here
       const commonId = 'cvsmart';  // This can be dynamic if needed
-      const apiUrl = `https://cv-smart-backend.onrender.com/api/v1//matching-candidates?userId=${userId}&commonId=${commonId}`;
+      const apiUrl = `https://cv-smart-backend.vercel.app/api/v1//matching-candidates?userId=${userId}&commonId=${commonId}`;
       
       console.log('Fetching candidates for userId:', userId);
       console.log('API URL:', apiUrl);
