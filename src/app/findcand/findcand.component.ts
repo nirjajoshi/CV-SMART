@@ -198,25 +198,27 @@ interface City {
 
     fetchCandidates(): void {
       const userDetails = JSON.parse(localStorage.getItem('userDetails') || '{}');
-      const userId = userDetails.id || '';  // Use 'id' here
-      const commonId = 'cvsmart';  // This can be dynamic if needed
-      const apiUrl = `https://cv-smart-backend.vercel.app/api/v1//matching-candidates?userId=${userId}&commonId=${commonId}`;
+      const userId = userDetails.id || '';
+      const commonId = 'cvsmart';
+  
+      // Update the API URL
+      const apiUrl = `https://cv-smart-backend.vercel.app/api/v1/matching-candidates?userId=${userId}&commonId=${commonId}`;
       
       console.log('Fetching candidates for userId:', userId);
       console.log('API URL:', apiUrl);
-    
+  
       this.http.get<Candidate[]>(apiUrl).subscribe(
-        (response: Candidate[]) => {
-          console.log('Received candidate response:', response);
-          this.candidates = response;  // Assuming candidates is a property in your component
-          this.showCandidateList = true;  // Toggle visibility of the candidate list if needed
-        },
-        (error) => {
-          console.error('Error fetching candidates:', error.message || error);
-          alert('An error occurred while fetching candidate listings.');
-        }
+          (response: Candidate[]) => {
+              console.log('Received candidate response:', response);
+              this.candidates = response;
+              this.showCandidateList = true; 
+          },
+          (error) => {
+              console.error('Error fetching candidates:', error);
+              alert('An error occurred while fetching candidate listings. Please check the console for more details.');
+          }
       );
-    }
+  }
 
 
     findCandidates(): void {
