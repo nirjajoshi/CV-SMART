@@ -115,10 +115,12 @@ interface City {
     }
   
     validateFileSize(): void {
-      const maxSizeInMB = 5;
+      const maxSizeInMB = 5; // Maximum file size in MB
       if (this.selectedFile && this.selectedFile.size > maxSizeInMB * 1024 * 1024) {
         this.message = `File size exceeds ${maxSizeInMB}MB. Please select a smaller file.`;
-        this.resetFileInput();
+        this.resetFileInput(); // Reset the file input if validation fails
+      } else {
+        this.message = ''; // Clear the message if validation passes
       }
     }
   
